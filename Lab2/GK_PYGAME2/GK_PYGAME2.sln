@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "GK_PYGAME2", "GK_PYGAME2.pyproj", "{0C0865EC-CE38-434D-BBC9-C6ABFCC08ABA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0C0865EC-CE38-434D-BBC9-C6ABFCC08ABA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C0865EC-CE38-434D-BBC9-C6ABFCC08ABA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B136B6FC-B1BF-40B9-88F6-F8E3C8415162}
+	EndGlobalSection
+EndGlobal
