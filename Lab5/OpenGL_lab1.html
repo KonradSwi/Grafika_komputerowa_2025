@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+<html>
+
+<!--
+ Use OpenGL and GLUT to draw a simple cube
+  with each face being a different color.  Rotations
+  can be applied with the arrow keys, the page up
+  key, and the page down key.  The home key will set
+  all rotations to 0.  Initial rotations about the
+  x, y, and z axes are 15, -15, and 0.  
+
+  This program is meant as an example of using modeling
+  transforms, with glPushMatrix and glPopMatrix.
+ 
+  Note that this program does not use lighting.
+-->
+
+<head>
+<meta charset="UTF-8">
+<title>Pyramid and Spiral</title>
+
+<script src="glsim.js"></script>  <!-- load the OpenGL 1.1 simulation code -->
+
+<script>
+
+    let rotateX = 15;   // rotations of cube about the axes
+    let rotateY = -15;
+    let rotateZ = 0;
+
+    const SIDES = 13;
+    // Tablica 13 różnych kolorów dla ścian bocznych
+    const colors = [
+        [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1],
+        [0, 1, 1], [0.5, 0, 0], [0, 0.5, 0], [0, 0, 0.5], [0.5, 0.5, 0],
+        [0.5, 0, 0.5], [0, 0.5, 0.5], [0.3, 0.3, 0.3]
+    ];
+
+    function drawPolygon() {
+        glBegin(GL_TRIANGLE_FAN);
+        glColor3f(1, 1, 1); // Biała podstawa
+        glVertex3f(0, 0, -0.5);
+        for (let i = 0; i <= SIDES; i++) {
+            let angle = (i / SIDES) * 2 * Math.PI;
+            let x = 0.5 * Math.cos(angle);
+            let y = 0.5 * Math.sin(angle);
+            glVertex3f(x, y, -0.5);
+        }
+        glEnd();
+    }
+
+    function drawSides() {
+        glBegin(GL_TRIANGLES);
+        let peak = [0, 0, 0.5]; // Wierzchołek piramidy
+        for (let i = 0; i < SIDES; i++) {
+            let angle1 = (i / SIDES) * 2 * Math.PI;
+            let angle2 = ((i + 1) / SIDES) * 2 * Math.PI;
+            let x1 = 0.5 * Math.cos(angle1);
+            let y1 = 0.5 * Math.sin(angle1);
+            let x2 = 0.5 * Math.cos(angle2);
+            let y2 = 0.5 * Math.sin(angle2);
+
+            glColor3f(...colors[i]); // Ustawienie innego koloru dla każdego boku
+            glVertex3f(x1, y1, -0.5);
+            glVertex3f(x2, y2, -0.5);
+            glVertex3f(...peak);
+        }
+        glEnd();
+    }
+
+    const SPIRAL_TURNS = 9;
+    const SPIRAL_POINTS = 500;
+    const COLORS = [
+        [0, 1, 0],
+        [0, 0, 1],
+        [0.6, 0.3, 0],
+        [1, 0, 0],
+        [1, 1, 0],
+        [1, 0, 1],
+        [0, 1, 1],
+        [1, 0.5, 0],
+        [0.5, 0, 0.5]
+    ];
+
+    function drawSpiral() {
+        let maxRadius = 0.5;
+        let angleStep = (Math.PI * 2 * SPIRAL_TURNS) / SPIRAL_POINTS;
+        let heightStep = 1.5 / SPIRAL_POINTS; // Przesunięcie w osi Z (korkociąg)
+
+        glBegin(GL_LINE_STRIP);
+        for (let i = 0; i < SPIRAL_POINTS; i++) {
+            let angle = i * angleStep;
+            let radius = (i / SPIRAL_POINTS) * maxRadius;
+            let x = radius * Math.cos(angle);
+            let y = radius * Math.sin(angle);
+            let z = -0.75 + i * heightStep; // Przesunięcie w osi Z
+
+            let color = COLORS[i % COLORS.length];
+            glColor3f(color[0], color[1], color[2]);
+            glVertex3f(x, y, z);
+        }
+        glEnd();
+        glFlush(); // Wymuszenie rysowania
+    }
+
+    // ------------------- functions for drawing the cube -------------------
+    /*
+    function square(r, g, b) {
+        glColor3f(r,g,b);
+        glBegin(GL_TRIANGLE_FAN);
+        glVertex3f(-0.5, -0.5, 0.5);
+        glVertex3f(0.5, -0.5, 0.5);
+        glVertex3f(0.5, 0.5, 0.5);
+        glVertex3f(-0.5, 0.5, 0.5);
+        glEnd();
+    }
+    
+    function cube(size) {  // draws a cube with side length = size
+    
+        glPushMatrix();
+        glScalef(size,size,size); // scale unit cube to desired size
+        
+        square(1, 0, 0); // red front face
+        
+        glPushMatrix();
+        glRotatef(90, 0, 1, 0);
+        square(0, 1, 0); // green right face
+        glPopMatrix();
+        
+        glPushMatrix();
+        glRotatef(-90, 1, 0, 0);
+        square(0, 0, 1); // blue top face
+        glPopMatrix();
+        
+        glPushMatrix();
+        glRotatef(180, 0, 1, 0);
+        square(0, 1, 1); // cyan back face
+        glPopMatrix();
+        
+        glPushMatrix();
+        glRotatef(-90, 0, 1, 0);
+        square(1, 0, 1); // magenta left face
+        glPopMatrix();
+        
+        glPushMatrix();
+        glRotatef(90, 1, 0, 0);
+        square(1, 1, 0); // yellow bottom face
+        glPopMatrix();
+        
+        glPopMatrix(); // Restore matrix to its state before cube() was called.
+    
+    }
+    */
+    // ----------------------------------------------------------------------
+
+    function display() {  // Draws the image.
+
+        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                
+        glLoadIdentity();             // Set up modelview transform. 
+        glRotatef(rotateZ,0,0,1);
+        glRotatef(rotateY,0,1,0);
+        glRotatef(rotateX,1,0,0);
+        
+        //cube(1);
+
+        if (currentObject === "pyramid") {
+            drawPolygon();
+            drawSides();
+        } else if (currentObject === "spiral") {
+            drawSpiral();
+        }
+    }
+    
+    function initGL() {
+        glMatrixMode(GL_PROJECTION);
+        glOrtho(-1, 1, -1, 1, -1, 1);
+        glMatrixMode(GL_MODELVIEW);
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(0, 0, 0, 1);
+    }
+    
+    function doKeyDown(evt) {
+        let key = evt.keyCode;
+        if ( key == 37 ) // left
+           rotateY -= 15;
+        else if ( key == 39 ) // right
+           rotateY += 15;
+        else if ( key == 40) // down
+           rotateX += 15;
+        else if ( key == 38 ) // up
+           rotateX -= 15;
+        else if ( key == 33 ) // page up
+           rotateZ += 15;
+        else if ( key == 34 ) // page down
+           rotateZ -= 15;
+        else if ( key == 36 )  // home
+            rotateX = rotateY = rotateZ = 0;
+        else if (key == 49) currentObject = "pyramid"; // Klawisz '1'
+        else if (key == 50) currentObject = "spiral"; // Klawisz '2'
+        if (key >=34 && key <= 50) {
+            evt.preventDefault();
+        }
+        display();
+    }
+    
+    function init() {  // Called by <body onload="init()">, when the page has loaded.
+        try {
+            glsimUse("glcanvas"); // OpenGL will draw to the canvas with id="glcanvas".
+        }
+        catch (e) {
+            document.getElementById("canvas-holder").innerHTML =
+                "Sorry, an error occured:<br>" + e;
+            return;
+        }
+        document.onkeydown = doKeyDown;
+        initGL();
+        display();
+    }
+
+</script>
+
+</head>
+
+<body onload="init()">
+
+<h3>Pyramid and Spiral in OpenGL 1.1</h3>
+
+<p>Rotate using arrow keys, page up, page down, and home keys. Press 1 (Pyramid) or 2 (Spiral).</p>
+
+<noscript>
+<p><b>Sorry, this page requires JavaScript!</b></p>
+</noscript>
+
+<div id="canvas-holder">
+<canvas id="glcanvas" width="500" height="500"></canvas>
+</div>
+
+</body>
+</html>
